@@ -15,6 +15,11 @@ using (var scope = app.Services.CreateScope())
 
 
 app.MapGet("/", () => "Hello World!");
+
+app.MapGet("/exists", 
+    (int episode, Ingester ingester) => 
+        ingester.CheckEpisodeExists(episode));
+
 app.MapPost("/ingest",
     async (
             Ingester ingester,

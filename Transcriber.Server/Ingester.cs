@@ -39,6 +39,9 @@ public class Ingester
 
         await _context.SaveChangesAsync();
     }
+
+    public bool CheckEpisodeExists(int episode) => 
+        _context.Episodes.Any(e => e.Number == episode);
 }
 
 public class IngestionSegments

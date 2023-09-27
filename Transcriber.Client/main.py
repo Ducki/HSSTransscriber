@@ -2,8 +2,12 @@ import os
 import re
 import subprocess
 import json
+from typing import List, Dict, Any
+
 import requests
 import whisper
+
+base_api_url = "http://localhost:5026/"
 
 
 def parse_episode_info(filename: str) -> dict:
@@ -29,7 +33,7 @@ def demux_audio(input_file):
     return output_file
 
 
-def transcribe_episode(audio_filename: str) -> dict:
+def transcribe_episode(audio_filename: str) -> list[dict[str, Any]]:
     model = whisper.load_model("medium")
     result = model.transcribe(audio_filename, verbose=False, language="German")
 
@@ -43,15 +47,7 @@ def transcribe_episode(audio_filename: str) -> dict:
 
         simple_segments.append(fiep)
 
-    parsed_episode_info = parse_episode_info(filename)
-
-    ingestable_stuff = dict(
-        episode_number=parsed_episode_info["number"],
-        episode_date=parsed_episode_info["date"],
-        episode_title=parsed_episode_info["title"],
-        segments=simple_segments)
-
-    return ingestable_stuff
+    return simple_segments
 
 
 def send_episode_to_api(ingestible_episode_data):
@@ -59,24 +55,42 @@ def send_episode_to_api(ingestible_episode_data):
     print(json_encoded)
 
     headers = {'Content-Type': 'application/json'}
-    url = "http://localhost:5026/ingest"
+    url = base_api_url + "ingest"
     response = requests.post(url, headers=headers, data=json_encoded)
     print(response.status_code)
 
 
+def check_episode_exists(episode_number: int) -> bool:
+    url = base_api_url + "exists"
+    params = {'episode': episode_number}
+    response = requests.get(url, params=params)
+    return response.text.lower() == "true"
+
+
 if __name__ == "__main__":
     # Loop through files
-    directory = '/Users/alex/Downloads/hss'
+    directory = '/Users/Alexander.Wicht/Desktop/hss'
 
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in filenames:
             absolute_file = os.path.join(dirpath, filename)
             print(f'Found file: {absolute_file}')
 
+            parsed_episode_info = parse_episode_info(filename)
+            if check_episode_exists(parsed_episode_info["number"]):
+                print("Episode already done, skipping …")
+                continue
+
             demuxed_audio_file = demux_audio(absolute_file)
             print("Demuxed audio")
 
-            ingestible_episode_data = transcribe_episode(demuxed_audio_file)
+            text_segments = transcribe_episode(demuxed_audio_file)
+            ingestible_episode_data = dict(
+                episode_number=parsed_episode_info["number"],
+                episode_date=parsed_episode_info["date"],
+                episode_title=parsed_episode_info["title"],
+                segments=text_segments)
+
             print(f"Transcribed episode {ingestible_episode_data['episode_title']}")
 
             send_episode_to_api(ingestible_episode_data)
