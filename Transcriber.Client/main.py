@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 import json
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 import argparse
 
 import requests
@@ -24,7 +24,7 @@ base_api_url = parser.parse_args().api_url
 input_file_directoy = parser.parse_args().file_directory
 
 
-def parse_episode_info(filename: str) -> dict:
+def parse_episode_info(filename: str) -> Union[dict[str, str], bool]:
     match = re.search(r'- (\d+) - (\d{4}-\d{2}-\d{2}) - (.+)\.mp4', filename)
 
     if match:
@@ -37,6 +37,8 @@ def parse_episode_info(filename: str) -> dict:
             date=date,
             title=title
         )
+    else:
+        return False
 
 
 def demux_audio(input_file):
@@ -91,7 +93,12 @@ if __name__ == "__main__":
             print(f'Found file: {absolute_file}')
 
             parsed_episode_info = parse_episode_info(filename)
-            if check_episode_exists(parsed_episode_info["number"]):
+
+            if not parsed_episode_info:
+                print("Found bogus file, skipping")
+                continue
+
+            if check_episode_exists(int(parsed_episode_info["number"])):
                 print("Episode already done, skipping …")
                 continue
 
