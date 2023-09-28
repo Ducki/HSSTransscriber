@@ -35,7 +35,7 @@ def demux_audio(input_file):
 
 def transcribe_episode(audio_filename: str) -> list[dict[str, Any]]:
     model = whisper.load_model("medium")
-    result = model.transcribe(audio_filename, verbose=False, language="German")
+    result = model.transcribe(audio_filename, verbose=False, language="German", fp16=False)
 
     simple_segments = []
 
@@ -52,7 +52,6 @@ def transcribe_episode(audio_filename: str) -> list[dict[str, Any]]:
 
 def send_episode_to_api(ingestible_episode_data):
     json_encoded = json.dumps(ingestible_episode_data, ensure_ascii=True)
-    print(json_encoded)
 
     headers = {'Content-Type': 'application/json'}
     url = base_api_url + "ingest"
