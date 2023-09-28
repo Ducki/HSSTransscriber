@@ -5,10 +5,12 @@ namespace Transcriber.Server;
 public class Ingester
 {
     private readonly MyContext _context;
+    private readonly ILogger<Ingester> _logger;
 
-    public Ingester(MyContext context)
+    public Ingester(MyContext context, ILogger<Ingester> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task IngestAsync(Ingestion ingestion)
@@ -38,6 +40,7 @@ public class Ingester
         }
 
         await _context.SaveChangesAsync();
+        _logger.LogInformation("Ingested episode {Title}", episode.Title);
     }
 
     public bool CheckEpisodeExists(int episode) => 
