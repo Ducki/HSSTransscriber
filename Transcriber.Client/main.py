@@ -3,11 +3,25 @@ import re
 import subprocess
 import json
 from typing import List, Dict, Any
+import argparse
 
 import requests
 import whisper
 
-base_api_url = "http://localhost:5026/"
+parser = argparse.ArgumentParser(description='Process options.')
+
+parser.add_argument('--api-url',
+                    type=str,
+                    required=True,
+                    help='The URL of the API, without trailing slash')
+
+parser.add_argument('--file-directory',
+                    type=str,
+                    required=True,
+                    help='The path where the video files are located')
+
+base_api_url = parser.parse_args().api_url
+input_file_directoy = parser.parse_args().file_directory
 
 
 def parse_episode_info(filename: str) -> dict:
@@ -54,23 +68,24 @@ def send_episode_to_api(ingestible_episode_data):
     json_encoded = json.dumps(ingestible_episode_data, ensure_ascii=True)
 
     headers = {'Content-Type': 'application/json'}
-    url = base_api_url + "ingest"
+    url = base_api_url + "/ingest"
     response = requests.post(url, headers=headers, data=json_encoded)
     print(response.status_code)
 
 
 def check_episode_exists(episode_number: int) -> bool:
-    url = base_api_url + "exists"
+    url = base_api_url + "/exists"
     params = {'episode': episode_number}
     response = requests.get(url, params=params)
     return response.text.lower() == "true"
 
 
 if __name__ == "__main__":
-    # Loop through files
-    directory = '/Users/Alexander.Wicht/Desktop/hss'
+    print("Got api url: " + base_api_url)
 
-    for dirpath, dirnames, filenames in os.walk(directory):
+    print("Looking for files …")
+
+    for dirpath, dirnames, filenames in os.walk(input_file_directoy):
         for filename in filenames:
             absolute_file = os.path.join(dirpath, filename)
             print(f'Found file: {absolute_file}')
