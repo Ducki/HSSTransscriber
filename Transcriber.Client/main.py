@@ -49,9 +49,17 @@ def demux_audio(input_file):
     return output_file
 
 
-def transcribe_episode(audio_filename: str) -> list[dict[str, Any]]:
+def transcribe_episode(audio_filename: str, topic: str) -> list[dict[str, Any]]:
+    initial_prompt = ("Eine Fernsehsendung mit Harald Schmidt, Helmut Zerlett, Manuel Andrack und Suzana Novinscak. "
+                      "Thema der Sendung unter anderem: ") + topic
+
     model = whisper.load_model("medium")
-    result = model.transcribe(audio_filename, verbose=False, language="German", fp16=False)
+    result = model.transcribe(
+        audio_filename,
+        verbose=False,
+        language="German",
+        fp16=False,
+        initial_prompt=initial_prompt)
 
     simple_segments = []
 
@@ -105,7 +113,7 @@ if __name__ == "__main__":
             demuxed_audio_file = demux_audio(absolute_file)
             print("Demuxed audio")
 
-            text_segments = transcribe_episode(demuxed_audio_file)
+            text_segments = transcribe_episode(demuxed_audio_file, parsed_episode_info["title"])
             ingestible_episode_data = dict(
                 episode_number=parsed_episode_info["number"],
                 episode_date=parsed_episode_info["date"],
