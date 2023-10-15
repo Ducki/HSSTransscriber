@@ -4,7 +4,53 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<form asp-page-handler="SaveDbInfo" method="post">
+    <label for="path">
+        Database path
+        <input type="text" name="path" id="path">
+    </label>
+    <button type="submit">Save</button>
+</form>
+<p>Currently saved: @HttpContext.Session.GetString("path")</p>
+
+<section>
+    <h2>Search</h2>
+
+    <form asp-page-handler="SearchFullText" method="post">
+        <label for="query">
+            Query
+            <input type="text" name="query" id="query">
+        </label>
+        <button type="submit">Search</button>
+    </form>
+
+    <div>
+        <h3>Results</h3>
+
+        @if (Model.ResultSegments is not null)
+        {
+            <table>
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Airdate</th>
+                    <th>Title</th>
+                    <th>Text</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var segment in Model.ResultSegments)
+                {
+                    <tr>
+                        <td>@segment.Episode.Number</td>
+                        <td>@segment.Episode.AirDate</td>
+                        <td>@segment.Episode.Title</td>
+                        <td>@segment.Text</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</section>
