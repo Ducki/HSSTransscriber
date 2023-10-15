@@ -29,6 +29,7 @@ public class IndexModel : PageModel
             .Include(t => t.Episode)
             .Where(t =>
                 EF.Functions.Like(t.Text, $"%{query}%"))
+            .OrderBy(o => o.Episode.Number)
             .ToList();
     }
 
