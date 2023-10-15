@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcriber.Server", "Transcriber.Server\Transcriber.Server.csproj", "{BF14D55B-3C1F-41E3-AE28-7B637A312799}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcriber.Browser", "Transcriber.Browser\Transcriber.Browser.csproj", "{80AE4A6D-E589-4612-8D88-0356A7BFBE40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{BF14D55B-3C1F-41E3-AE28-7B637A312799}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF14D55B-3C1F-41E3-AE28-7B637A312799}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF14D55B-3C1F-41E3-AE28-7B637A312799}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80AE4A6D-E589-4612-8D88-0356A7BFBE40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80AE4A6D-E589-4612-8D88-0356A7BFBE40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80AE4A6D-E589-4612-8D88-0356A7BFBE40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80AE4A6D-E589-4612-8D88-0356A7BFBE40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
