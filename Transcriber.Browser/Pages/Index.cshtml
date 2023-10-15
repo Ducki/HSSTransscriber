@@ -29,12 +29,15 @@
 
         @if (Model.ResultSegments is not null)
         {
+            <p>Found <strong>@Model.ResultSegments.Count</strong> segments:</p>
+
             <table>
                 <thead>
                 <tr>
                     <th>No</th>
                     <th>Airdate</th>
                     <th>Title</th>
+                    <th>Start Time</th>
                     <th>Text</th>
                 </tr>
                 </thead>
@@ -45,6 +48,7 @@
                         <td>@segment.Episode.Number</td>
                         <td>@segment.Episode.AirDate</td>
                         <td>@segment.Episode.Title</td>
+                        <td>@segment.Start.ToString(@"mm\:ss")</td>
                         <td>@segment.Text</td>
                     </tr>
                 }
